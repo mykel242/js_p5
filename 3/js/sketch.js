@@ -1,10 +1,9 @@
 // not with box2d
 let particles = [];
-let max_particles = 1000;
-let num_particles = 1;
+let max_particles = 2500;
 let X_max = 360;
-let Y_max = 720; //640;
-let R_max = 4;
+let Y_max = 640;
+let R_max = 10;
 let bkgColor;
 
 class Particle {
@@ -12,7 +11,8 @@ class Particle {
     this.startPosition = createVector(0, 0);
     this.position = createVector(0, 0);
     this.radius = 0;
-    this.velocity = createVector(4,0);
+    let nudge = random(-0.25,0.5);
+    this.velocity = createVector(nudge,0);
   };
 
   setup(position) {
@@ -26,18 +26,22 @@ class Particle {
     if (this.position.y > Y_max + this.radius) {
       this.velocity.y = 1;
       this.position.y = 0 - this.radius;
+      // this.velocity.x += 0.1;
     }
 
     if (this.position.x > X_max + this.radius) {
       this.position.x = 0 - this.radius
     }
 
-    this.velocity.y = sqrt(max(1, this.position.y));
+    this.velocity.y = sqrt(max(1, this.position.y)) * 0.5;
     this.position.add(this.velocity);
 
   };
 
   render() {
+    let c = color(0,0,255,85);
+    fill(c);
+    noStroke();
     ellipse(
       this.position.x,
       this.position.y,
@@ -47,17 +51,17 @@ class Particle {
 
 
 function randomColor() {
-  let color = {
+  let c = {
     red:   random(255),
     green: random(255),
     blue:  random(255),
   };
-  return color;
+  return color(c.red, c.green, c.blue);
 }
 
 function setup() {
   createCanvas(X_max, Y_max);
-  bkgColor = randomColor();
+  bkgColor = color('hsb(20, 65%, 100%)'); //randomColor();
   num_particles = random(500, max_particles);
   for (let i = 0; i < num_particles; i++) {
     particles[i] = new Particle();
@@ -69,7 +73,7 @@ function setup() {
 
 function draw() {
 
-  background(bkgColor.red, bkgColor.green, bkgColor.blue);
+  background(bkgColor);
 
   for (let i = 0; i < particles.length; i++) {
     particles[i].update();
