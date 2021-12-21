@@ -13,6 +13,8 @@ class Particle {
     this.radius = 0;
     let nudge = random(-0.25,0.5);
     this.velocity = createVector(nudge,0);
+
+    this.alpha = 75;
   };
 
   setup(position) {
@@ -26,22 +28,26 @@ class Particle {
     if (this.position.y > Y_max + this.radius) {
       this.velocity.y = 1;
       this.position.y = 0 - this.radius;
-      // this.velocity.x += 0.1;
     }
 
     if (this.position.x > X_max + this.radius) {
       this.position.x = 0 - this.radius
     }
 
-    this.velocity.y = sqrt(max(1, this.position.y)) * 0.5;
+    this.velocity.y = sqrt(max(1, this.position.y)) * 0.45;
     this.position.add(this.velocity);
+
+    this.alpha =  100 - (this.position.y / Y_max * 100);
 
   };
 
   render() {
-    let c = color(0,0,255,85);
+    let c = color(0,0,255,this.alpha);
     fill(c);
-    noStroke();
+
+    stroke(0,255,0);
+    strokeWeight(1);
+
     ellipse(
       this.position.x,
       this.position.y,
