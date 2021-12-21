@@ -1,9 +1,9 @@
 // not with box2d
 let particles = [];
-let max_particles = 2500;
+let max_particles = 1000;
 let X_max = 360;
 let Y_max = 640;
-let R_max = 10;
+let R_max = 20;
 let bkgColor;
 
 class Particle {
@@ -14,7 +14,17 @@ class Particle {
     let nudge = random(-0.25,0.5);
     this.velocity = createVector(nudge,0);
 
+    this.acceleration = 0.5;
+
     this.alpha = 75;
+    //this.strokeColor = color(0,255,0);
+    this.strokeColor =
+      color(
+        255,
+        255,
+        200,
+        random(100)
+      );
   };
 
   setup(position) {
@@ -34,18 +44,37 @@ class Particle {
       this.position.x = 0 - this.radius
     }
 
-    this.velocity.y = sqrt(max(1, this.position.y)) * 0.45;
+    this.velocity.y = sqrt(max(1, this.position.y)) * this.acceleration;
     this.position.add(this.velocity);
 
     this.alpha =  100 - (this.position.y / Y_max * 100);
 
   };
 
+  reverse() {
+
+    if (this.position.y < 0 - this.radius) {
+      this.velocity.y = 1;
+      this.position.y = Y_max + this.radius;
+    }
+
+    if (this.position.x > X_max + this.radius) {
+      this.position.x = 0 - this.radius
+    }
+
+    this.velocity.y = -(sqrt(max(1, this.position.y)) * this.acceleration);
+    this.position.add(this.velocity);
+
+    this.alpha =  100 - (this.position.y / Y_max * 100);
+
+  };
+
+
   render() {
     let c = color(0,0,255,this.alpha);
     fill(c);
 
-    stroke(0,255,0);
+    stroke(this.strokeColor);
     strokeWeight(1);
 
     ellipse(
@@ -82,7 +111,11 @@ function draw() {
   background(bkgColor);
 
   for (let i = 0; i < particles.length; i++) {
+    //particles[i].update();
+    particles[i].acceleration = (mouseY - (height / 2)) / height;
     particles[i].update();
+
+
     particles[i].render();
   }
 
