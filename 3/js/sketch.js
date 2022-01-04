@@ -11,8 +11,8 @@ class Particle {
     this.startPosition = createVector(0, 0);
     this.position = createVector(0, 0);
     this.radius = 0;
-    let nudge = random(-0.25,0.5);
-    this.velocity = createVector(nudge,0);
+    this.nudge = random(-0.25,0.5);
+    this.velocity = createVector(this.nudge,0);
 
     this.acceleration = 0.5;
 
@@ -35,6 +35,11 @@ class Particle {
 
   update() {
 
+    if ((this.position.y < 0 - this.radius) && (this.acceleration < 0)) {
+      this.velocity.y = 1;
+      this.position.y = Y_max + this.radius;
+    }
+
     if (this.position.y > Y_max + this.radius) {
       this.velocity.y = 1;
       this.position.y = 0 - this.radius;
@@ -50,25 +55,6 @@ class Particle {
     this.alpha =  100 - (this.position.y / Y_max * 100);
 
   };
-
-  reverse() {
-
-    if (this.position.y < 0 - this.radius) {
-      this.velocity.y = 1;
-      this.position.y = Y_max + this.radius;
-    }
-
-    if (this.position.x > X_max + this.radius) {
-      this.position.x = 0 - this.radius
-    }
-
-    this.velocity.y = -(sqrt(max(1, this.position.y)) * this.acceleration);
-    this.position.add(this.velocity);
-
-    this.alpha =  100 - (this.position.y / Y_max * 100);
-
-  };
-
 
   render() {
     let c = color(0,0,255,this.alpha);
@@ -113,9 +99,8 @@ function draw() {
   for (let i = 0; i < particles.length; i++) {
     //particles[i].update();
     particles[i].acceleration = (mouseY - (height / 2)) / height;
+    //particles[i].velocity.x  = abs(width - mouseX)
     particles[i].update();
-
-
     particles[i].render();
   }
 
